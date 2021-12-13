@@ -21,5 +21,10 @@ setup(
     python_requires=">=3.6",
     py_modules=[],
     install_requires=[],
+    entry_points={
+        'console_scripts': [
+            'webxp = webxp.cli:main',
+        ],
+    },
     test_suite='tests',
 )
