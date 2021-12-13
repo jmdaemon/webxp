@@ -15,17 +15,11 @@ setup(
     project_urls={
         "Bug Tracker": "https://github.com/jmdaemon/webxp/issues",
     },
-    
     license='MIT',
-    
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.6",
     py_modules=[],
-    
-    install_requires=[
-        'Click',
-    ],
-    
+    install_requires=[],
     test_suite='tests',
 )
