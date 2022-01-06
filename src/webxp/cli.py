@@ -38,21 +38,27 @@ def get(url, opts):
     r = requests.get(url)
     soup = BeautifulSoup(r.content, features='lxml')
 
-    assert(len(opts) <= 1) # Ignore combinable ops for now
     opt = opts[0]
-    match opt:
-        case '-f' | '--filter':
+    raw = opts[1]
+    match opt, raw:
+        case '-f' | '--filter', '-r' | '--raw':
             tags = opts[1:]
             for tag in tags:
-                # output.append(type(tag))
-                print(type(tag))
+                print(tag.extract())
+        case '-f' | '--filter', None:
+            tags = opts[1:]
+            for tag in tags:
+                print(tag)
             # return
-        case '-t' | '--tags':
+        case '-t' | '--tags', '-r' | '--raw':
             tags = opts[1:]
             for tag in soup.find_all(tags):
                 print(tag.extract().get_text())
+        case '-t' | '--tags', None:
+            tags = opts[1:]
+            for tag in soup.find_all(tags):
+                print(tag.prettify())
         case _:
             # output.append(soup.prettify())
             print(soup.prettify())
-            # return
     return
