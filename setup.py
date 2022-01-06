@@ -8,7 +8,7 @@ setup(
     version="0.1.0",
     author="Joseph Diza",
     author_email="josephm.diza@gmail.com",
-    description="A powerful web crawler that searches results with precise filters",
+    description="A general purpose tool to browse the web",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/jmdaemon/webxp",

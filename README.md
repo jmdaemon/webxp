@@ -1,6 +1,6 @@
 # WebXP
 
-A powerful web crawler that searches results with precise filters
+A general purpose tool to browse the web
 
 ## Installation
 
