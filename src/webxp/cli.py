@@ -40,25 +40,23 @@ def get(url, opts):
 
     opt = opts[0]
     raw = opts[1]
-    match opt, raw:
-        case '-f' | '--filter', '-r' | '--raw':
+    match opt:
+        case '-f' | '--filter':
             tags = opts[1:]
-            for tag in tags:
-                print(tag.extract())
-        case '-f' | '--filter', None:
+            if raw == '-r' | '--raw':
+                for tag in tags:
+                    print(tag.extract())
+            else:
+                for tag in tags:
+                    print(tag)
+        case '-t' | '--tags':
             tags = opts[1:]
-            for tag in tags:
-                print(tag)
-            # return
-        case '-t' | '--tags', '-r' | '--raw':
-            tags = opts[1:]
-            for tag in soup.find_all(tags):
-                print(tag.extract().get_text())
-        case '-t' | '--tags', None:
-            tags = opts[1:]
-            for tag in soup.find_all(tags):
-                print(tag.prettify())
+            if raw == '-r' | '--raw':
+                for tag in soup.find_all(tags):
+                    print(tag.extract().get_text())
+            else:
+                for tag in soup.find_all(tags):
+                    print(tag.prettify())
         case _:
-            # output.append(soup.prettify())
             print(soup.prettify())
     return
