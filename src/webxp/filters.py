@@ -75,4 +75,3 @@ def filter_html(soup, opts, raw):
     else:
         logging.info('Returning raw html')
         return html
-

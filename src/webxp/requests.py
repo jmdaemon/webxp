@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from webxp.filters import filter_html
-from webxp.cli import show_raw, show_response
+from webxp.utility import show_raw, show_response
 
 import requests
 import logging
