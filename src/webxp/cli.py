@@ -24,6 +24,8 @@ def main():
 
     match subcmd:
         case "get": get(url, opts)
+        case "post": post(url, opts)
+        case "scrape": scrape(url, opts)
 
 def get(url, opts):
     '''
@@ -60,3 +62,24 @@ def get(url, opts):
         case _:
             print(soup.prettify())
     return
+
+def post(url, opts):
+    r = requests.get(url)
+
+    opt = opts[0]
+
+    match opt:
+        case "":
+            pass
+
+    # Create header
+
+    # Send Request
+    soup = BeautifulSoup(r.content, features='lxml')
+
+    # Read Response
+    # Display response
+
+# Scrapes the given site for information
+def scrape(url, opts):
+    pass
