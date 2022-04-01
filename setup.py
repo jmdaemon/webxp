@@ -23,7 +23,7 @@ setup(
     install_requires=[],
     entry_points={
         'console_scripts': [
-            'webxp = webxp.cli:main',
+            'webxp = webxp.main:main',
         ],
     },
     test_suite='tests',
