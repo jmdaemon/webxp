@@ -29,28 +29,7 @@ def main():
         case "post": post(url, opts)
         case "scrape": scrape(url, opts)
 
-def get(url, opts):
-    '''
-    Sends a GET request to a specified url, and outputs the response
-
-    Options:
-        -r, --regex     : Filters by regex
-        -t, --tags      : Filters by html tags
-        -c, --css-class : Filters by css classes
-        -s, --css       : Filters using css class selectors
-        -r, --raw       : Outputs raw html content
-    Examples:
-        webxp get [url] -t p -s 'outer-text'
-    '''
-
-    r = requests.get(url)
-    soup = BeautifulSoup(r.content, features='lxml')
-
-    # TODO: Create unified library for Get & Post requests
-    # to specify request headers from command line arguments
-    opt = opts[0]
-    raw = opts[1]
-
+def filter_html(opts):
     regex = ''
     css_classes = ''
     css_selectors = ''
@@ -59,8 +38,9 @@ def get(url, opts):
 
     # Set get arguments
     for i in range(len(opts)):
+        arg = opts[i]
         # Parse filter options
-        match opt:
+        match arg:
             case '-t' | '--tags':
                 html_tags = opts[i + 1]
             case '-c' | '--css-class':
@@ -85,17 +65,48 @@ def get(url, opts):
         pattern = re.compile(regex)
         results = pattern.findall(html.content)
         # Show all results
-        for result in results:
-            print(result)
-        return
+        # for result in results:
+            # print(result)
+        return results
 
     if raw:
         # Prints the raw text
-        print(html.extract().get_text())
+        # print(html.extract().get_text())
+        return html.extract().get_text()
     else:
         # Pretty print the html
-        print(html.prettify())
+        # print(html.prettify())
+        return html.prettify()
     return
+
+
+def get(url, opts):
+    '''
+    Sends a GET request to a specified url, and outputs the response
+
+    Options:
+        -r, --regex     : Filters by regex
+        -t, --tags      : Filters by html tags
+        -c, --css-class : Filters by css classes
+        -s, --css       : Filters using css class selectors
+        -r, --raw       : Outputs raw html content
+    Examples:
+        webxp get [url] -t p -s 'outer-text'
+    '''
+
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, features='lxml')
+
+    # TODO: Create unified library for Get & Post requests
+    # to specify request headers from command line arguments
+    opt = opts[0]
+    raw = opts[1]
+    results = filter_html(opts)
+    if (len(results) > 0):
+        for result in results:
+            print(result)
+    else:
+        print(results)
 
 # TODO:
 # Add ability to specify header fields
