@@ -6,6 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="webxp",
     version="0.2.0",
+    license='AGPL-3.0',
     author="Joseph Diza",
     author_email="josephm.diza@gmail.com",
     description="A general purpose tool to browse the web",
@@ -17,10 +18,9 @@ setup(
     },
     classifiers=[
         'Programming Language :: Python :: 3',
-        'GNU Affero General Public License v3 or later (AGPLv3+)',
+        'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Operating System :: OS Independent'
     ],
-    license='AGPL-3.0',
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.6",
