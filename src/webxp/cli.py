@@ -51,18 +51,8 @@ def show_raw(opts):
                 logging.info('Set raw : %s', raw)
     return raw
 
-def filter_html(soup, opts, raw):
-    '''
-    Filter an html response
-
-    Options:
-        -r, --regex     : Filters by regex
-        -t, --tags      : Filters by html tags
-        -c, --css-class : Filters by css classes
-        -s, --css       : Filters using css class selectors
-        -r, --raw       : Outputs raw html content
-    '''
-    logging.info('In filter_html() function')
+def get_filters(opts):
+    ''' Extracts the cli args to filter the html requests '''
     regex = ''
     css_classes = ''
     css_selectors = ''
@@ -82,9 +72,25 @@ def filter_html(soup, opts, raw):
             case '-s' | '--css':
                 css_selectors = opts[i + 1]
                 logging.info('Set css selector: %s', css_selectors)
-            case '-f' | '--filter':
+            case '-r' | '--regex':
                 regex = opts[i + 1]
                 logging.info('Set regex: %s', regex)
+
+    return (regex, css_classes, css_selectors, html_tags)
+
+def filter_html(soup, opts, raw):
+    '''
+    Filter an html response
+
+    Options:
+        -r, --regex     : Filters by regex
+        -t, --tags      : Filters by html tags
+        -c, --css-class : Filters by css classes
+        -s, --css       : Filters using css class selectors
+        -r, --raw       : Outputs raw html content
+    '''
+    logging.info('In filter_html() function')
+    (regex, css_classes, css_selectors, html_tags) = get_filters(opts)
 
     # Filter by html tags and/or css selectors
     html = BeautifulSoup()
