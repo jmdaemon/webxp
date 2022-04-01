@@ -4,25 +4,35 @@ import requests
 import logging
 from bs4 import BeautifulSoup
 
+# Set logging level
+logging.basicConfig(level=logging.INFO)
+
 def main():
     '''
     Usage:
         webxp <subcmd> <url> options
     '''
-    cmds = ['get']
+    cmds = ['get', 'post', 'scrape']
 
     subcmd = None
     url = None
     opts = None
+
+    # Parse the subcommands
     for cmd in cmds:
         if cmd in sys.argv:
             subcmd = cmd.lower()
+    logging.info("Log Message: ")
+    if (subcmd):
+        logging.info("Subcommand: ", subcmd)
     if subcmd is None:
         print('Nothing to do')
         sys.exit(1)
     else:
         url = sys.argv[2]
         opts = sys.argv[3:]
+    logging.info("Url:", url)
+    logging.info("Options:", opts)
 
     match subcmd:
         case "get": get(url, opts)
@@ -105,6 +115,7 @@ def get(url, opts):
         webxp get [url] -t p -s 'outer-text'
     '''
 
+    logging.info('In get() function')
     r = requests.get(url)
     soup = BeautifulSoup(r.content, features='lxml')
 
@@ -119,6 +130,7 @@ def get(url, opts):
 # Add ability to specify header fields
 # Set default header file configurations
 def post(url, opts):
+    logging.info('In post() function')
     # Create headers & parse custom opts
     opt = opts[0]
 
@@ -142,7 +154,20 @@ def post(url, opts):
 # Add feature to grep content/text for specific keywords
 def scrape(url, opts):
     ''' Scrapes the given site for information '''
+    logging.info('In scrape() function')
     r = requests.get(url)
     logging.info("Response:", r.content)
     soup = BeautifulSoup(r.content, features='lxml')
     logging.info(soup.prettify())
+
+    # Dispatch to various scraper backends
+    for i in range(len(opts)):
+        arg = opts[i]
+        # Parse filter options
+        match arg:
+            case 'forecast.gov':
+                # seven_day = soup.find(id="seven-day-forecast")
+                summary = soup.find(id="current_conditions-summary")
+                conditions = soup.find(id="current_conditions_detail")
+                print(summary)
+                print(conditions)

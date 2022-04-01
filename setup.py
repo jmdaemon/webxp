@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="webxp-jmd",
-    version="0.1.0",
+    name="webxp",
+    version="0.2.0",
     author="Joseph Diza",
     author_email="josephm.diza@gmail.com",
     description="A general purpose tool to browse the web",
