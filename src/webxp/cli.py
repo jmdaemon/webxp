@@ -29,21 +29,18 @@ def main():
         case "post": post(url, opts)
         case "scrape": scrape(url, opts)
 
-# TODO:
-# Add ability to parse html tags
-# Add ability to parse css selectors
-# Add ability to parse both simultaneously
-# Set default to parsing with css selectors
-# Examples:
-# webxp get [url] -t p -s 'outer-text'
 def get(url, opts):
     '''
     Sends a GET request to a specified url, and outputs the response
+
     Options:
-        -r, --regex  : Filters by regex
-        -t, --tags   : Filters by html tags
-        -s, --css    : Filters by css class selectors
-        -r, --raw    : Outputs raw html content
+        -r, --regex     : Filters by regex
+        -t, --tags      : Filters by html tags
+        -c, --css-class : Filters by css classes
+        -s, --css       : Filters using css class selectors
+        -r, --raw       : Outputs raw html content
+    Examples:
+        webxp get [url] -t p -s 'outer-text'
     '''
 
     r = requests.get(url)
@@ -56,25 +53,31 @@ def get(url, opts):
 
     regex = ''
     css_classes = ''
+    css_selectors = ''
     html_tags = ''
     raw = False
 
     # Set get arguments
-    i = 0
-    for arg in opts:
+    for i in range(len(opts)):
         # Parse filter options
         match opt:
             case '-t' | '--tags':
                 html_tags = opts[i + 1]
-            case '-s' | '--css':
+            case '-c' | '--css-class':
                 css_classes = opts[i + 1]
+            case '-s' | '--css':
+                css_selectors = opts[i + 1]
             case '-f' | '--filter':
                 regex = opts[i + 1]
             case '-r' | '--raw':
                 raw = True
 
     # Filter by html tags and/or css selectors
-    html = soup.find_all(html_tags, class_=css_classes)
+    html = ''
+    if css_selectors:
+        html = soup.select(css_selectors)
+    else:
+        html = soup.find_all(html_tags, class_=css_classes)
 
     # Additionally, filter the html by regex
     if (regex):
