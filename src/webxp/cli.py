@@ -22,17 +22,16 @@ def main():
     for cmd in cmds:
         if cmd in sys.argv:
             subcmd = cmd.lower()
-    logging.info("Log Message: ")
-    if (subcmd):
-        logging.info("Subcommand: ", subcmd)
+    if subcmd:
+        logging.info("Subcommand: %s", subcmd)
     if subcmd is None:
         print('Nothing to do')
         sys.exit(1)
     else:
         url = sys.argv[2]
         opts = sys.argv[3:]
-    logging.info("Url:", url)
-    logging.info("Options:", opts)
+    logging.info("Url: %s", url)
+    logging.info("Options: %s", opts)
 
     match subcmd:
         case "get": get(url, opts)
@@ -140,7 +139,7 @@ def post(url, opts):
 
     # Create and send request
     r = requests.get(url)
-    logging.info("Response:", r.content)
+    logging.debug("Response: %s", r.content)
 
     # Yield html response
     soup = BeautifulSoup(r.content, features='lxml')
@@ -156,9 +155,9 @@ def scrape(url, opts):
     ''' Scrapes the given site for information '''
     logging.info('In scrape() function')
     r = requests.get(url)
-    logging.info("Response:", r.content)
+    logging.debug("Response: %s", r.content)
     soup = BeautifulSoup(r.content, features='lxml')
-    logging.info(soup.prettify())
+    logging.debug("HTML Response: %s", soup.prettify())
 
     # Dispatch to various scraper backends
     for i in range(len(opts)):
