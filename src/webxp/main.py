@@ -1,11 +1,6 @@
-from bs4 import BeautifulSoup
-
-# import re
-# import requests
-# import pandas as pd
 import sys
 import logging
-from webxp.cli import get, post, scrape, scrapy
+from webxp.requests import get, post, scrape, scrapy
 
 # Set logging level
 logging.basicConfig(level=logging.INFO)
