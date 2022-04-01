@@ -1,8 +1,10 @@
+from bs4 import BeautifulSoup
+
 import re
 import sys
 import requests
 import logging
-from bs4 import BeautifulSoup
+import pandas as pd
 
 # Set logging level
 logging.basicConfig(level=logging.INFO)
@@ -67,7 +69,7 @@ def filter_html(soup, opts, raw):
     html_tags = ''
 
     # Set get arguments
-    for i in range(len(opts)):
+    for i in range(0, len(opts)):
         arg = opts[i]
         # Parse filter options
         match arg:
@@ -179,26 +181,40 @@ def scrape(url, opts):
     ''' Scrapes the given site for information '''
     logging.info('In scrape() function')
     r = requests.get(url)
+    logging.info('Got Response')
     logging.debug('Response: %s', r.content)
+
     soup = BeautifulSoup(r.content, features='lxml')
+    logging.info('Parsed html content')
     logging.debug('HTML Response: %s', soup.prettify())
 
     # Dispatch to various scraper backends
-    for i in range(len(opts)):
+    for i in range(0, len(opts)):
         arg = opts[i]
         # Parse filter options
         match arg:
             case 'forecast.gov':
+                logging.info('In forecast.gov')
                 # seven_day = soup.find(id='seven-day-forecast')
-                summary = soup.find(id='current_conditions-summary')
-                conditions = soup.find(id='current_conditions_detail')
-                temp_farenheit = summary.find(class_='myforecast-current-lrg').get_text()
-                temp_celsius = summary.find(class_='myforecast-current-sm').get_text()
+                summary         = soup.find(id='current_conditions-summary')
+                conditions      = soup.find(id='current_conditions_detail')
+                current         = pd.read_html(url)
+                # current         = pd.read_html(r.content)
+                # current         = pd.read_html(r.text)
+                temp_farenheit  = summary.find(class_='myforecast-current-lrg').get_text()
+                temp_celsius    = summary.find(class_='myforecast-current-sm').get_text()
 
-                # Display to user
                 logging.info(summary.prettify())
                 logging.info(conditions.prettify())
+                logging.info("Temperature Farenheit: %s", temp_farenheit)
+                logging.info("Temperature Celsius: %s", temp_celsius)
+                logging.info("Today's conditions:\n%s", current)
+
+                # Display to user
+                # df = current[0]
+                # df.head()
 
                 print('Temperature: ', temp_celsius)
+
 def scrapy(url, opts):
     pass
