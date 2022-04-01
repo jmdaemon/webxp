@@ -107,32 +107,36 @@ def filter_html(soup, opts, raw):
     if raw:
         # Prints the raw text
         # print(html.extract().get_text())
-        logging.info('Returning raw html')
-        return html.extract().get_text()
+        logging.info('Returning prettified html')
+        results = []
+        for result in html:
+            results.append(result.extract().get_text())
+
     else:
         # Pretty print the html
         # print(html.prettify())
-        logging.info('Returning prettified html')
+        logging.info('Returning raw html')
         # print(html.prettify())
-        print(html)
+        return html
         # return html.prettify()
-    return
 
 def show_response(results, raw):
     ''' Display the filtered response '''
     # if (len(results) - 1 > 0):
-    if (results is not None):
-        if (len(results) > 0):
-            if raw:
-                for result in results:
-                    print(result)
-                    print()
-            else:
-                for result in results:
-                    print(result.extract().get_text())
-            return
-        else:
-            print(results)
+    if (results is None):
+        return
+
+    if (len(results) > 0):
+        # if raw:
+            for result in results:
+                print(result)
+                print()
+        # else:
+            # for result in results:
+                # print(result.extract().get_text())
+    else:
+        print(results)
+    return
 
 def get(url, opts):
     '''
