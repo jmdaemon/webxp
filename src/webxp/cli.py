@@ -166,7 +166,13 @@ def scrape(url, opts):
         match arg:
             case 'forecast.gov':
                 # seven_day = soup.find(id="seven-day-forecast")
-                summary = soup.find(id="current_conditions-summary")
-                conditions = soup.find(id="current_conditions_detail")
-                print(summary)
-                print(conditions)
+                summary = soup.find(id='current_conditions-summary')
+                conditions = soup.find(id='current_conditions_detail')
+                temp_farenheit = summary.find(class_='myforecast-current-lrg').get_text()
+                temp_celsius = summary.find(class_='myforecast-current-sm').get_text()
+
+                # Display to user
+                logging.info(summary.prettify())
+                logging.info(conditions.prettify())
+
+                print("Temperature: ", temp_celsius)
