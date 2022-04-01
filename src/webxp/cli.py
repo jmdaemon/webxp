@@ -12,7 +12,7 @@ def main():
     Usage:
         webxp <subcmd> <url> options
     '''
-    cmds = ['get', 'post', 'scrape']
+    cmds = ['get', 'post', 'scrape', 'scrapy']
 
     subcmd = None
     url = None
@@ -23,22 +23,23 @@ def main():
         if cmd in sys.argv:
             subcmd = cmd.lower()
     if subcmd:
-        logging.info("Subcommand: %s", subcmd)
+        logging.info('Subcommand: %s', subcmd)
     if subcmd is None:
         print('Nothing to do')
         sys.exit(1)
     else:
         url = sys.argv[2]
         opts = sys.argv[3:]
-    logging.info("Url: %s", url)
-    logging.info("Options: %s", opts)
+    logging.info('Url: %s', url)
+    logging.info('Options: %s', opts)
 
     match subcmd:
-        case "get": get(url, opts)
-        case "post": post(url, opts)
-        case "scrape": scrape(url, opts)
+        case 'get': get(url, opts)
+        case 'post': post(url, opts)
+        case 'scrape': scrape(url, opts)
+        case 'scrapy': scrape(url, opts)
 
-def filter_html(opts):
+def filter_html(soup, opts):
     '''
     Filter an html response
 
@@ -49,6 +50,7 @@ def filter_html(opts):
         -s, --css       : Filters using css class selectors
         -r, --raw       : Outputs raw html content
     '''
+    logging.info('In filter_html() function')
     regex = ''
     css_classes = ''
     css_selectors = ''
@@ -62,27 +64,35 @@ def filter_html(opts):
         match arg:
             case '-t' | '--tags':
                 html_tags = opts[i + 1]
+                logging.info('Set tags: %s', html_tags)
             case '-c' | '--css-class':
                 css_classes = opts[i + 1]
+                logging.info('Set css class: %s', css_classes)
             case '-s' | '--css':
                 css_selectors = opts[i + 1]
+                logging.info('Set css selector: %s', css_selectors)
             case '-f' | '--filter':
                 regex = opts[i + 1]
+                logging.info('Set regex: %s', regex)
             case '-r' | '--raw':
                 raw = True
+                logging.info('Set raw : %s', raw)
 
     # Filter by html tags and/or css selectors
-    html = ''
-    if css_selectors:
+    html = BeautifulSoup()
+    if css_selectors != '':
         html = soup.select(css_selectors)
+        logging.info('Filter html with css selectors')
     else:
-        html = soup.find_all(html_tags, class_=css_classes)
+        html = soup.find_all(id=html_tags, class_=css_classes)
+        logging.info('Filter html with html_tags & css classes')
 
     # Additionally, filter the html by regex
     if (regex):
         # Compile regex
         pattern = re.compile(regex)
         results = pattern.findall(html.content)
+        logging.info('Filter html by regex')
         # Show all results
         # for result in results:
             # print(result)
@@ -91,11 +101,15 @@ def filter_html(opts):
     if raw:
         # Prints the raw text
         # print(html.extract().get_text())
+        logging.info('Returning raw html')
         return html.extract().get_text()
     else:
         # Pretty print the html
         # print(html.prettify())
-        return html.prettify()
+        logging.info('Returning prettified html')
+        # print(html.prettify())
+        print(html)
+        # return html.prettify()
     return
 
 def show_response(results):
@@ -120,9 +134,9 @@ def get(url, opts):
 
     # TODO: Create unified library for Get & Post requests
     # to specify request headers from command line arguments
-    opt = opts[0]
-    raw = opts[1]
-    results = filter_html(opts)
+    # opt = opts[0]
+    # raw = opts[1]
+    results = filter_html(soup, opts)
     show_response(results)
 
 # TODO:
@@ -131,15 +145,15 @@ def get(url, opts):
 def post(url, opts):
     logging.info('In post() function')
     # Create headers & parse custom opts
-    opt = opts[0]
+    # opt = opts[0]
 
-    match opt:
-        case "":
-            pass
+    # match opt:
+        # case '':
+            # pass
 
     # Create and send request
     r = requests.get(url)
-    logging.debug("Response: %s", r.content)
+    logging.debug('Response: %s', r.content)
 
     # Yield html response
     soup = BeautifulSoup(r.content, features='lxml')
@@ -155,9 +169,9 @@ def scrape(url, opts):
     ''' Scrapes the given site for information '''
     logging.info('In scrape() function')
     r = requests.get(url)
-    logging.debug("Response: %s", r.content)
+    logging.debug('Response: %s', r.content)
     soup = BeautifulSoup(r.content, features='lxml')
-    logging.debug("HTML Response: %s", soup.prettify())
+    logging.debug('HTML Response: %s', soup.prettify())
 
     # Dispatch to various scraper backends
     for i in range(len(opts)):
@@ -165,7 +179,7 @@ def scrape(url, opts):
         # Parse filter options
         match arg:
             case 'forecast.gov':
-                # seven_day = soup.find(id="seven-day-forecast")
+                # seven_day = soup.find(id='seven-day-forecast')
                 summary = soup.find(id='current_conditions-summary')
                 conditions = soup.find(id='current_conditions_detail')
                 temp_farenheit = summary.find(class_='myforecast-current-lrg').get_text()
@@ -175,4 +189,6 @@ def scrape(url, opts):
                 logging.info(summary.prettify())
                 logging.info(conditions.prettify())
 
-                print("Temperature: ", temp_celsius)
+                print('Temperature: ', temp_celsius)
+def scrapy(url, opts):
+    pass
