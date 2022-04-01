@@ -30,6 +30,16 @@ def main():
         case "scrape": scrape(url, opts)
 
 def filter_html(opts):
+    '''
+    Filter an html response
+
+    Options:
+        -r, --regex     : Filters by regex
+        -t, --tags      : Filters by html tags
+        -c, --css-class : Filters by css classes
+        -s, --css       : Filters using css class selectors
+        -r, --raw       : Outputs raw html content
+    '''
     regex = ''
     css_classes = ''
     css_selectors = ''
@@ -79,17 +89,18 @@ def filter_html(opts):
         return html.prettify()
     return
 
+def show_response(results):
+    ''' Display the filtered response '''
+    if (len(results) > 0):
+        for result in results:
+            print(result)
+    else:
+        print(results)
 
 def get(url, opts):
     '''
     Sends a GET request to a specified url, and outputs the response
 
-    Options:
-        -r, --regex     : Filters by regex
-        -t, --tags      : Filters by html tags
-        -c, --css-class : Filters by css classes
-        -s, --css       : Filters using css class selectors
-        -r, --raw       : Outputs raw html content
     Examples:
         webxp get [url] -t p -s 'outer-text'
     '''
@@ -102,11 +113,7 @@ def get(url, opts):
     opt = opts[0]
     raw = opts[1]
     results = filter_html(opts)
-    if (len(results) > 0):
-        for result in results:
-            print(result)
-    else:
-        print(results)
+    show_response(results)
 
 # TODO:
 # Add ability to specify header fields
@@ -127,7 +134,8 @@ def post(url, opts):
     soup = BeautifulSoup(r.content, features='lxml')
 
     # Show response to user
-    print(soup.prettify())
+    results = filter_html(opts)
+    show_response(results)
 
 # TODO:
 # Combine with scrapy to follow links
