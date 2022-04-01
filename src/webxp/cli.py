@@ -171,7 +171,8 @@ def post(url, opts):
     soup = BeautifulSoup(r.content, features='lxml')
 
     # Show response to user
-    results = filter_html(opts)
+    raw = show_raw(opts)
+    results = filter_html(soup, opts, raw)
     show_response(results)
 
 # TODO:
@@ -198,9 +199,7 @@ def scrape(url, opts):
                 # seven_day = soup.find(id='seven-day-forecast')
                 summary         = soup.find(id='current_conditions-summary')
                 conditions      = soup.find(id='current_conditions_detail')
-                current         = pd.read_html(url)
-                # current         = pd.read_html(r.content)
-                # current         = pd.read_html(r.text)
+                current         = pd.read_html(r.content)
                 temp_farenheit  = summary.find(class_='myforecast-current-lrg').get_text()
                 temp_celsius    = summary.find(class_='myforecast-current-sm').get_text()
 
@@ -210,11 +209,10 @@ def scrape(url, opts):
                 logging.info("Temperature Celsius: %s", temp_celsius)
                 logging.info("Today's conditions:\n%s", current)
 
+                df = current[0]
+                print(df.head())
                 # Display to user
-                # df = current[0]
-                # df.head()
-
-                print('Temperature: ', temp_celsius)
+                # print('Temperature: ', temp_celsius)
 
 def scrapy(url, opts):
     pass
