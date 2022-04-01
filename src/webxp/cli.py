@@ -39,7 +39,17 @@ def main():
         case 'scrape': scrape(url, opts)
         case 'scrapy': scrape(url, opts)
 
-def filter_html(soup, opts):
+def show_raw(opts):
+    raw = False
+    for i in range(len(opts)):
+        arg = opts[i]
+        match arg:
+            case '-r' | '--raw':
+                raw = True
+                logging.info('Set raw : %s', raw)
+    return raw
+
+def filter_html(soup, opts, raw):
     '''
     Filter an html response
 
@@ -55,7 +65,6 @@ def filter_html(soup, opts):
     css_classes = ''
     css_selectors = ''
     html_tags = ''
-    raw = False
 
     # Set get arguments
     for i in range(len(opts)):
@@ -74,9 +83,6 @@ def filter_html(soup, opts):
             case '-f' | '--filter':
                 regex = opts[i + 1]
                 logging.info('Set regex: %s', regex)
-            case '-r' | '--raw':
-                raw = True
-                logging.info('Set raw : %s', raw)
 
     # Filter by html tags and/or css selectors
     html = BeautifulSoup()
@@ -112,13 +118,21 @@ def filter_html(soup, opts):
         # return html.prettify()
     return
 
-def show_response(results):
+def show_response(results, raw):
     ''' Display the filtered response '''
-    if (len(results) > 0):
-        for result in results:
-            print(result)
-    else:
-        print(results)
+    # if (len(results) - 1 > 0):
+    if (results is not None):
+        if (len(results) > 0):
+            if raw:
+                for result in results:
+                    print(result)
+                    print()
+            else:
+                for result in results:
+                    print(result.extract().get_text())
+            return
+        else:
+            print(results)
 
 def get(url, opts):
     '''
@@ -136,8 +150,9 @@ def get(url, opts):
     # to specify request headers from command line arguments
     # opt = opts[0]
     # raw = opts[1]
-    results = filter_html(soup, opts)
-    show_response(results)
+    raw = show_raw(opts)
+    results = filter_html(soup, opts, raw)
+    show_response(results, raw)
 
 # TODO:
 # Add ability to specify header fields
