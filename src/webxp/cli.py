@@ -99,41 +99,32 @@ def filter_html(soup, opts, raw):
         pattern = re.compile(regex)
         results = pattern.findall(html.content)
         logging.info('Filter html by regex')
-        # Show all results
-        # for result in results:
-            # print(result)
+        # If logging is set to debug
+        if logging.root.level >= logging.DEBUG:
+            # Show all results
+            for result in results:
+                print(result)
         return results
 
     if raw:
         # Prints the raw text
-        # print(html.extract().get_text())
         logging.info('Returning prettified html')
         results = []
         for result in html:
             results.append(result.extract().get_text())
-
     else:
-        # Pretty print the html
-        # print(html.prettify())
         logging.info('Returning raw html')
-        # print(html.prettify())
         return html
-        # return html.prettify()
 
-def show_response(results, raw):
+def show_response(results):
     ''' Display the filtered response '''
-    # if (len(results) - 1 > 0):
     if (results is None):
         return
 
     if (len(results) > 0):
-        # if raw:
-            for result in results:
-                print(result)
-                print()
-        # else:
-            # for result in results:
-                # print(result.extract().get_text())
+        for result in results:
+            print(result)
+            print()
     else:
         print(results)
     return
@@ -156,7 +147,7 @@ def get(url, opts):
     # raw = opts[1]
     raw = show_raw(opts)
     results = filter_html(soup, opts, raw)
-    show_response(results, raw)
+    show_response(results)
 
 # TODO:
 # Add ability to specify header fields
