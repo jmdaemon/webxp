@@ -1,5 +1,7 @@
+import re
 import sys
 import requests
+import logging
 from bs4 import BeautifulSoup
 
 def main():
@@ -27,59 +29,98 @@ def main():
         case "post": post(url, opts)
         case "scrape": scrape(url, opts)
 
+# TODO:
+# Add ability to parse html tags
+# Add ability to parse css selectors
+# Add ability to parse both simultaneously
+# Set default to parsing with css selectors
+# Examples:
+# webxp get [url] -t p -s 'outer-text'
 def get(url, opts):
     '''
     Sends a GET request to a specified url, and outputs the response
     Options:
-        -f, --filter: filters by regex
-        -t, --tags : Filters by specific html tags only
-    Combinable
-        -r, --raw : Outputs raw contents of either tags or entire tree
+        -r, --regex  : Filters by regex
+        -t, --tags   : Filters by html tags
+        -s, --css    : Filters by css class selectors
+        -r, --raw    : Outputs raw html content
     '''
 
     r = requests.get(url)
     soup = BeautifulSoup(r.content, features='lxml')
 
+    # TODO: Create unified library for Get & Post requests
+    # to specify request headers from command line arguments
     opt = opts[0]
     raw = opts[1]
-    match opt:
-        case '-f' | '--filter':
-            tags = opts[1:]
-            if raw == '-r' | '--raw':
-                for tag in tags:
-                    print(tag.extract())
-            else:
-                for tag in tags:
-                    print(tag)
-        case '-t' | '--tags':
-            tags = opts[1:]
-            if raw == '-r' | '--raw':
-                for tag in soup.find_all(tags):
-                    print(tag.extract().get_text())
-            else:
-                for tag in soup.find_all(tags):
-                    print(tag.prettify())
-        case _:
-            print(soup.prettify())
+
+    regex = ''
+    css_classes = ''
+    html_tags = ''
+    raw = False
+
+    # Set get arguments
+    i = 0
+    for arg in opts:
+        # Parse filter options
+        match opt:
+            case '-t' | '--tags':
+                html_tags = opts[i + 1]
+            case '-s' | '--css':
+                css_classes = opts[i + 1]
+            case '-f' | '--filter':
+                regex = opts[i + 1]
+            case '-r' | '--raw':
+                raw = True
+
+    # Filter by html tags and/or css selectors
+    html = soup.find_all(html_tags, class_=css_classes)
+
+    # Additionally, filter the html by regex
+    if (regex):
+        # Compile regex
+        pattern = re.compile(regex)
+        results = pattern.findall(html.content)
+        # Show all results
+        for result in results:
+            print(result)
+        return
+
+    if raw:
+        # Prints the raw text
+        print(html.extract().get_text())
+    else:
+        # Pretty print the html
+        print(html.prettify())
     return
 
+# TODO:
+# Add ability to specify header fields
+# Set default header file configurations
 def post(url, opts):
-    r = requests.get(url)
-
+    # Create headers & parse custom opts
     opt = opts[0]
 
     match opt:
         case "":
             pass
 
-    # Create header
+    # Create and send request
+    r = requests.get(url)
+    logging.info("Response:", r.content)
 
-    # Send Request
+    # Yield html response
     soup = BeautifulSoup(r.content, features='lxml')
 
-    # Read Response
-    # Display response
+    # Show response to user
+    print(soup.prettify())
 
-# Scrapes the given site for information
+# TODO:
+# Combine with scrapy to follow links
+# Add feature to grep content/text for specific keywords
 def scrape(url, opts):
-    pass
+    ''' Scrapes the given site for information '''
+    r = requests.get(url)
+    logging.info("Response:", r.content)
+    soup = BeautifulSoup(r.content, features='lxml')
+    logging.info(soup.prettify())
