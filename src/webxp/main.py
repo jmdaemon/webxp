@@ -1,6 +1,6 @@
 import sys
 import logging
-from webxp.requests import get, post, scrape, scrapy
+from webxp.requests import get, post, scrape, scrapy, search
 
 # Set logging level
 logging.basicConfig(level=logging.INFO)
@@ -10,7 +10,7 @@ def main():
     Usage:
         webxp <subcmd> <url> options
     '''
-    cmds = ['get', 'post', 'scrape', 'scrapy']
+    cmds = ['get', 'post', 'scrape', 'scrapy', 'search']
 
     subcmd = None
     url = None
@@ -36,3 +36,4 @@ def main():
         case 'post': post(url, opts)
         case 'scrape': scrape(url, opts)
         case 'scrapy': scrape(url, opts)
+        case 'search': search(url, opts)
