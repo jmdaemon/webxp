@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="webxp",
-    version="0.2.0",
+    version="0.3.0",
     license='AGPL-3.0',
     author="Joseph Diza",
     author_email="josephm.diza@gmail.com",
