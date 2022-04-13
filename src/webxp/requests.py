@@ -125,15 +125,15 @@ def search(url, opts):
             case '--s':
                 search_term = opts[i + 1]
 
+    # Search for search_term in requests
+    pattern = re.compile(search_term)
+
     # Send a request to the url
     r = requests.get(url)
     logging.debug('Response: %s', r.content)
 
     # Parse html response
     soup = BeautifulSoup(r.content, features='lxml')
-
-    # Search for search_term in requests
-    pattern = re.compile(search_term)
 
     # Return all regex responses of the request
     # results = pattern.findall(soup.content)
@@ -157,20 +157,27 @@ def search(url, opts):
     # Follow all links
     while (link_sources is not None):
         for link in link_sources:
+            # Send a request to the url
             print(f'Url: {link}')
             r = requests.get(link)
             logging.debug('Response: %s', r.content)
+
+            # Parse html response
             soup = BeautifulSoup(r.content, features='lxml')
 
-            # results = pattern.findall(r.content)
+            # Return all regex responses of the request
+            # results = pattern.findall(soup.content)
             results = pattern.findall(soup.prettify())
             print('Results: ')
-
             show_response(results)
+
+            # Cache search results
+
+            # Get all links on the page
             nested_links += soup.findAll('a')
             nested_link_sources += [nlink.get('href') for nlink in nested_links]
 
-            # Parsing links
+            # Sanitize the links
             nested_link_sources = sanitize_links(nested_link_sources)
 
         # Add the new link sources
