@@ -93,6 +93,27 @@ def scrape(url, opts):
 def scrapy(url, opts):
     pass
 
+def sanitize_links(links: list[str]):
+    ''' Returns the fully qualified url of a link
+
+    This function will remove any null links, and
+    will return the fully qualified link urls to be followed
+    '''
+    index = 0
+    for link in links:
+        if (link is None):
+            # Remove the bad link
+            links.remove(link)
+            index += 1
+            continue
+        elif link.startswith('//', 0, 2):
+            logging.info(type(link))
+            # Sanitize it
+            link = 'https:' + link
+            # Use the sanitized link
+            links[index] = link
+    return links
+
 def search(url, opts):
     ''' Searches the site for the given information'''
     logging.info('In search() function')
@@ -111,9 +132,6 @@ def search(url, opts):
     # Parse html response
     soup = BeautifulSoup(r.content, features='lxml')
 
-    # Get the search term to look for
-    # (regex, _, _, _) = get_filters(opts)
-    # pattern = re.compile(regex)
     # Search for search_term in requests
     pattern = re.compile(search_term)
 
@@ -131,24 +149,7 @@ def search(url, opts):
     link_sources = [link.get('href') for link in links]
 
     # Sanitize the links
-    index = 0
-    for linksrc in link_sources:
-        if (linksrc is None):
-            # Remove the bad link
-            # link_sources.remove(index)
-            link_sources.remove(linksrc)
-            # Skip processing of null links
-            index += 1
-            continue
-        elif linksrc.startswith('//', 0, 2):
-            print(type(linksrc))
-            # Sanitize it
-            link = 'https:' + linksrc
-
-            # Use the sanitized link
-            link_sources[index] = link
-            index += 1
-
+    link_sources = sanitize_links(link_sources)
 
     nested_links = []
     nested_link_sources = []
@@ -170,25 +171,7 @@ def search(url, opts):
             nested_link_sources += [nlink.get('href') for nlink in nested_links]
 
             # Parsing links
-            for linksrc in nested_link_sources:
-                if (linksrc is None):
-                    # Remove the bad link
-                    # link_sources.remove(index)
-                    nested_link_sources.remove(linksrc)
-                    # Skip processing of null links
-                    index += 1
-                    continue
-                elif linksrc.startswith('//', 0, 2):
-                    print(type(linksrc))
-                    # Sanitize it
-                    link = 'https:' + linksrc
+            nested_link_sources = sanitize_links(nested_link_sources)
 
-            # Use the sanitized link
-            # link_sources[index] = link
-            # index += 1
-            # for link in nested_link_sources:
-                # if link.startswith('//'):
-                    # link = 'https:' + link
         # Add the new link sources
         link_sources = nested_link_sources
-        # Go again
