@@ -128,29 +128,8 @@ def search(url, opts):
     # Search for search_term in requests
     pattern = re.compile(search_term)
 
-    # Send a request to the url
-    r = requests.get(url)
-    logging.debug('Response: %s', r.content)
-
-    # Parse html response
-    soup = BeautifulSoup(r.content, features='lxml')
-
-    # Return all regex responses of the request
-    # results = pattern.findall(soup.content)
-    results = pattern.findall(soup.prettify())
-    print(f'Url: {url}')
-    print('Results: ')
-    print(results)
-
-    # Cache search results
-
-    # Get all links on the page
-    links = soup.findAll('a')
-    link_sources = [link.get('href') for link in links]
-
-    # Sanitize the links
-    link_sources = sanitize_links(link_sources)
-
+    # Set initial link sources
+    link_sources = [url]
     nested_links = []
     nested_link_sources = []
 
