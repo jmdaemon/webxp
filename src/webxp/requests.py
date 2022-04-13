@@ -101,10 +101,9 @@ def sanitize_links(links: list[str]):
     '''
     index = 0
     for link in links:
-        if (link is None):
+        if link is None:
             # Remove the bad link
             links.remove(link)
-            index += 1
             continue
         elif link.startswith('//', 0, 2):
             logging.info(type(link))
@@ -112,6 +111,7 @@ def sanitize_links(links: list[str]):
             link = 'https:' + link
             # Use the sanitized link
             links[index] = link
+        index += 1
     return links
 
 def search(url, opts):
@@ -157,13 +157,13 @@ def search(url, opts):
     # Follow all links
     while (link_sources is not None):
         for link in link_sources:
+            print(f'Url: {link}')
             r = requests.get(link)
             logging.debug('Response: %s', r.content)
             soup = BeautifulSoup(r.content, features='lxml')
 
             # results = pattern.findall(r.content)
             results = pattern.findall(soup.prettify())
-            print(f'Url: {link}')
             print('Results: ')
 
             show_response(results)
