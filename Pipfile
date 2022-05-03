@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-webxp-jmd = {editable = true, path = "."}
-beautifulsoup4 = "*"
+webxp = {editable = true, path = "."}
 requests = "*"
+beautifulsoup4 = "*"
 pandas = "*"
 
 [dev-packages]
