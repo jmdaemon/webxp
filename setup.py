@@ -24,7 +24,11 @@ setup(
     packages=find_packages(where="src"),
     python_requires=">=3.6",
     py_modules=[],
-    install_requires=[],
+    install_requires=[
+        'beautifulsoup4',
+        'requests',
+        'pandas',
+    ],
     entry_points={
         'console_scripts': [
             'webxp = webxp.main:main',
