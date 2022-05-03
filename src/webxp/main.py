@@ -1,15 +1,25 @@
+import os
 import sys
 import logging
 from webxp.requests import get, post, scrape, scrapy, search
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
+# loglevel = loglevel if loglevel else logging.ERROR
+# if loglevel is None:
+    # loglevel = logging.NOTSET
 
 def main():
     '''
     Usage:
         webxp <subcmd> <url> options
     '''
+    # Set the loglevel and default to no logging statements
+    loglevel = os.environ.get("LOGLEVEL")
+    # loglevel = loglevel if loglevel is not None else logging.NOTSET
+    if loglevel is None:
+        loglevel = logging.ERROR
+    logging.basicConfig(level=loglevel)
+    logging.info(f'Log level: {loglevel}')
+
     cmds = ['get', 'post', 'scrape', 'scrapy', 'search']
 
     subcmd = None
@@ -23,7 +33,7 @@ def main():
     if subcmd:
         logging.info('Subcommand: %s', subcmd)
     if subcmd is None:
-        print('Nothing to do')
+        logging.info('Nothing to do')
         sys.exit(1)
     else:
         url = sys.argv[2]
