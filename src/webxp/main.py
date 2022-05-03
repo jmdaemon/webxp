@@ -3,10 +3,6 @@ import sys
 import logging
 from webxp.requests import get, post, scrape, scrapy, search
 
-# loglevel = loglevel if loglevel else logging.ERROR
-# if loglevel is None:
-    # loglevel = logging.NOTSET
-
 def main():
     '''
     Usage:
@@ -14,9 +10,7 @@ def main():
     '''
     # Set the loglevel and default to no logging statements
     loglevel = os.environ.get("LOGLEVEL")
-    # loglevel = loglevel if loglevel is not None else logging.NOTSET
-    if loglevel is None:
-        loglevel = logging.ERROR
+    loglevel = loglevel if loglevel is not None else logging.ERROR
     logging.basicConfig(level=loglevel)
     logging.info(f'Log level: {loglevel}')
 
